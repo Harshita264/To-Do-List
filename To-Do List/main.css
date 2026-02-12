@@ -154,3 +154,8 @@ main {
 .task .actions .delete {
 	color: crimson;
 }
+
+#new-task-submit:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}

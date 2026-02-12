@@ -1,13 +1,36 @@
 window.addEventListener('load', () => {
+	//DOM ELEMENT REFERENCES
 	const form = document.querySelector("#new-task-form");
 	const input = document.querySelector("#new-task-input");
 	const list_el = document.querySelector("#tasks");
+	const submitBtn = document.querySelector("#new-task-submit");
 
+	//INITIAL UI STATE
+	submitBtn.disabled = true;
+
+	//LIVE INPUT VALIDATION
+	input.addEventListener("input", () => {
+		const trimmedValue = input.value.trim();
+
+		if(trimmedValue === "") {
+			submitBtn.disabled = true;
+		} else {
+			submitBtn.disabled = false;
+		}
+	});
+
+	//FORM SUBMISSION LOGIC
 	form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
-		const task = input.value;
+		const task = input.value.trim();
 
+		if(task === "") {
+			return;
+		}
+
+		//TASK CREATION LOGIC
+		
 		const task_el = document.createElement('div');
 		task_el.classList.add('task');
 
@@ -43,6 +66,7 @@ window.addEventListener('load', () => {
 		list_el.appendChild(task_el);
 
 		input.value = '';
+		submitBtn.disabled = true;
 
 		task_edit_el.addEventListener('click', (e) => {
 			if (task_edit_el.innerText.toLowerCase() == "edit") {
