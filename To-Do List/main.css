@@ -164,3 +164,10 @@ main {
 	text-decoration: line-through;
 	color: var(--grey);
 }
+
+.checkbox {
+	margin-right: 0.75rem;
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+}

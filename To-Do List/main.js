@@ -49,13 +49,15 @@ window.addEventListener('load', () => {
 				task_el.classList.remove("completed");
 			}
 		});
-
+		
 		const task_input_el = document.createElement('input');
 		task_input_el.classList.add('text');
 		task_input_el.type = 'text';
 		task_input_el.value = task;
 		task_input_el.setAttribute('readonly', 'readonly');
 
+		task_content_el.appendChild(checkbox);
+		
 		task_content_el.appendChild(task_input_el);
 
 		const task_actions_el = document.createElement('div');
@@ -84,7 +86,7 @@ window.addEventListener('load', () => {
 		if(task_el.classList.contains("completed")){
 			return;
 		}
-		
+
 			if (task_edit_el.innerText.toLowerCase() == "edit") {
 				task_edit_el.innerText = "Save";
 				task_input_el.removeAttribute("readonly");
