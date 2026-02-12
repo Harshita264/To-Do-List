@@ -159,3 +159,8 @@ main {
 	opacity: 0.4;
 	cursor: not-allowed;
 }
+
+.task.completed .text {
+	text-decoration: line-through;
+	color: var(--grey);
+}

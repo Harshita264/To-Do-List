@@ -30,7 +30,10 @@ window.addEventListener('load', () => {
 		}
 
 		//TASK CREATION LOGIC
-		
+		const checkbox = document.createElement("input");
+		checkbox.type = "checkbox";
+		checkbox.classList.add("checkbox");
+
 		const task_el = document.createElement('div');
 		task_el.classList.add('task');
 
@@ -38,6 +41,14 @@ window.addEventListener('load', () => {
 		task_content_el.classList.add('content');
 
 		task_el.appendChild(task_content_el);
+
+		checkbox.addEventListener("change", () => {
+			if(checkbox.checked) {
+				task_el.classList.add("completed");
+			} else {
+				task_el.classList.remove("completed");
+			}
+		});
 
 		const task_input_el = document.createElement('input');
 		task_input_el.classList.add('text');
@@ -69,6 +80,11 @@ window.addEventListener('load', () => {
 		submitBtn.disabled = true;
 
 		task_edit_el.addEventListener('click', (e) => {
+			
+		if(task_el.classList.contains("completed")){
+			return;
+		}
+		
 			if (task_edit_el.innerText.toLowerCase() == "edit") {
 				task_edit_el.innerText = "Save";
 				task_input_el.removeAttribute("readonly");
