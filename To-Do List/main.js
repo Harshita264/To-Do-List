@@ -4,8 +4,10 @@ window.addEventListener('load', () => {
 	const input = document.querySelector("#new-task-input");
 	const list_el = document.querySelector("#tasks");
 	const submitBtn = document.querySelector("#new-task-submit");
+	const filterButtons = document.querySelectorAll(".filter-btn");
 
 	//INITIAL UI STATE
+	let currentFilter = "all";		//This variable controls what the UI shows, not what exists.
 	submitBtn.disabled = true;
 
 	//LIVE INPUT VALIDATION
@@ -18,6 +20,33 @@ window.addEventListener('load', () => {
 			submitBtn.disabled = false;
 		}
 	});
+
+	function applyFilter(){
+			const tasks = document.querySelectorAll(".task");
+
+			tasks.forEach(task => {
+				const isCompleted = task.classList.contains("completed");
+
+				if(currentFilter === "all"){
+					task.style.display = "flex";
+				}
+				else if(currentFilter === "active"){
+					task.style.display = isCompleted ? "none" : "flex";
+				}
+				else if(currentFilter === "completed"){
+					task.style.display = isCompleted ? "flex" : "none";
+				}
+			});
+		}
+
+		filterButtons.forEach(button => {
+			button.addEventListener("click", () => {
+				currentFilter = button.dataset.filter;
+
+				filterButtons.forEach(btn => btn.classList.remove("active"));
+				button.classList.add("active");
+			});
+		});
 
 	//FORM SUBMISSION LOGIC
 	form.addEventListener('submit', (e) => {
@@ -49,6 +78,8 @@ window.addEventListener('load', () => {
 				task_el.classList.remove("completed");
 			}
 		});
+
+		applyFilter();
 		
 		const task_input_el = document.createElement('input');
 		task_input_el.classList.add('text');
