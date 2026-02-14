@@ -193,3 +193,15 @@ input[type="checkbox"]{
 	opacity: 1;
 	font-weight: bold;
 }
+
+.bulk-actions {
+	margin-bottom: 1rem;
+	display: flex;
+	gap: 0.5rem;
+}
+
+.bulk-actions button {
+	padding: 0.4rem 0.8rem;
+	border-radius: 0.5rem;
+	cursor: pointer;
+}

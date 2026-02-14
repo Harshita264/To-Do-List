@@ -5,6 +5,8 @@ window.addEventListener('load', () => {
 	const list_el = document.querySelector("#tasks");
 	const submitBtn = document.querySelector("#new-task-submit");
 	const filterButtons = document.querySelectorAll(".filter-btn");
+	const clearCompletedBtn = document.querySelector("#clear-completed");
+	const clearAllBtn = document.querySelector("#clear-all");
 
 	//INITIAL UI STATE
 	let currentFilter = "all";		//This variable controls what the UI shows, not what exists.
@@ -45,8 +47,26 @@ window.addEventListener('load', () => {
 
 				filterButtons.forEach(btn => btn.classList.remove("active"));
 				button.classList.add("active");
+
+				applyFilter();
 			});
 		});
+
+		clearCompletedBtn.addEventListener("click", () => {
+			const tasks = document.querySelectorAll(".task");
+
+			tasks.forEach(task => {
+				if(task.classList.contains("completed")) {
+					task.remove();
+				}
+				applyFilter();
+			});
+		});
+
+		clearAllBtn.addEventListener("click", () => {
+			list_el.innerHTML = "";
+		});
+		applyFilter();
 
 	//FORM SUBMISSION LOGIC
 	form.addEventListener('submit', (e) => {
@@ -77,9 +97,9 @@ window.addEventListener('load', () => {
 			} else {
 				task_el.classList.remove("completed");
 			}
-		});
 
-		applyFilter();
+			applyFilter();
+		});
 		
 		const task_input_el = document.createElement('input');
 		task_input_el.classList.add('text');
@@ -108,6 +128,7 @@ window.addEventListener('load', () => {
 		task_el.appendChild(task_actions_el);
 
 		list_el.appendChild(task_el);
+		applyFilter();
 
 		input.value = '';
 		submitBtn.disabled = true;
