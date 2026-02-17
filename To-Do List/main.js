@@ -11,6 +11,7 @@ window.addEventListener('load', () => {
 	//INITIAL UI STATE
 	let currentFilter = "all";		//This variable controls what the UI shows, not what exists.
 	submitBtn.disabled = true;
+	input.focus();
 
 	//LIVE INPUT VALIDATION
 	input.addEventListener("input", () => {
@@ -134,10 +135,22 @@ window.addEventListener('load', () => {
 		submitBtn.disabled = true;
 
 		task_edit_el.addEventListener('click', (e) => {
-			
+			let originalValue;
 		if(task_el.classList.contains("completed")){
+			originalValue = task_input_el.value;
 			return;
 		}
+		task_input_el.addEventListener("keydown", (e) => {
+			if(e.key === "Escape") {
+				task_input_el.value = originalValue;
+				task_input_el.setAttribute("readonly", "readonly");
+				task_edit_el.innerText = "Edit";
+			}
+			if(e.key === "Enter") {
+				task_input_el.setAttribute("readonly", "readonly");
+				task_edit_el.innerText = "Edit";
+			}
+		});
 
 			if (task_edit_el.innerText.toLowerCase() == "edit") {
 				task_edit_el.innerText = "Save";
