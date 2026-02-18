@@ -1,0 +1,611 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Serif+Display&display=swap');
+
+/* ── Variables ── */
+:root {
+  --bg-base:    #07071a;
+  --bg-card:    rgba(255, 255, 255, 0.04);
+  --border:     rgba(255, 255, 255, 0.08);
+  --neon:       #a78bfa;
+  --neon-dark:  #7c3aed;
+  --neon-blue:  #38bdf8;
+  --pink:       #f472b6;
+  --danger:     #f87171;
+  --text:       #e2e8f0;
+  --muted:      #64748b;
+  --grey:       #94a3b8;
+  --glow:       rgba(167, 139, 250, 0.3);
+}
+
+/* ── Reset ── */
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* ── Body + Animated Background ── */
+body {
+  font-family: 'Sora', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  color: var(--text);
+  background-color: var(--bg-base);
+  /* Animated mesh gradient */
+  background-image:
+    radial-gradient(ellipse 80% 55% at 15% 5%,  rgba(124, 58, 237, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 85% 85%, rgba(56, 189, 248, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 60% 40%, rgba(167, 139, 250, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+  animation: meshPulse 14s ease-in-out infinite alternate;
+  overflow-x: hidden;
+}
+
+/* very subtle hue drift on the background */
+@keyframes meshPulse {
+  0%   { filter: hue-rotate(0deg) brightness(1); }
+  100% { filter: hue-rotate(20deg) brightness(1.04); }
+}
+
+/* fine grid overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(167, 139, 250, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(167, 139, 250, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ── */
+header {
+  padding: 3rem 1.5rem 2rem;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  animation: fadeDown 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Fix #1: clear bottom border to separate header zone from task zone */
+  border-bottom: 1px solid rgba(167, 139, 250, 0.1);
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.4rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #e2e8f0 20%, var(--neon) 65%, var(--neon-blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.4rem;
+  line-height: 1.1;
+}
+
+/* Fix #1: subtitle under title for hierarchy */
+header h1::after {
+  content: 'Stay ahead of everything.';
+  display: block;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  background: none;
+  -webkit-text-fill-color: var(--muted);
+  color: var(--muted);
+  margin-top: 0.3rem;
+  margin-bottom: 1.2rem;
+}
+
+
+/* ── Form ── */
+#new-task-form {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+input, button {
+  appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+#new-task-input {
+  flex: 1 1 0%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  padding: 0.9rem 1.2rem;
+  border-radius: 14px;
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(8px);
+}
+
+#new-task-input::placeholder {
+  color: var(--muted);
+}
+
+#new-task-input:focus {
+  border-color: var(--neon);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15), 0 0 20px rgba(167, 139, 250, 0.08);
+}
+
+/* ── Add Task Button ── */
+#new-task-submit {
+  background: linear-gradient(135deg, var(--neon-dark), var(--neon));
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.9rem 1.5rem;
+  border-radius: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  /* remove the gradient-text trick from before */
+  -webkit-text-fill-color: #fff;
+  background-clip: unset;
+  -webkit-background-clip: unset;
+  box-shadow: 0 4px 24px rgba(124, 58, 237, 0.4);
+  transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
+}
+
+#new-task-submit:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.55);
+  filter: brightness(1.1);
+}
+
+#new-task-submit:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+#new-task-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Main ── */
+main {
+  flex: 1 1 0%;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Task List Section ── */
+.task-list {
+  padding: 1rem 1.5rem 2rem;
+  animation: fadeUp 0.6s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.task-list h2 {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+/* ── Filter Buttons — Fix #5: grouped panel ── */
+.filters {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  /* Fix #5: sunken background panel to group filters */
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 13px;
+  padding: 0.3rem;
+  width: fit-content;
+  backdrop-filter: blur(8px);
+}
+
+.filter-btn {
+  padding: 0.4rem 1.1rem;
+  border-radius: 9px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 1;
+}
+
+.filter-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.filter-btn.active {
+  /* Fix #5: pill highlight that looks like a physical selector */
+  background: rgba(167, 139, 250, 0.18);
+  border-color: rgba(167, 139, 250, 0.4);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.3), 0 1px 0 rgba(255,255,255,0.08) inset;
+}
+
+/* ── Bulk Actions ── */
+.bulk-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.bulk-actions button {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--grey);
+  background: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s;
+}
+
+.bulk-actions button:hover {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: var(--danger);
+}
+
+/* ── Task Item ── */
+#tasks .task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Fix #2: richer glass card */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Fix #2: top edge highlight + deep shadow for real depth */
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.07) inset,
+    0 12px 40px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+  padding: 1.1rem 1.3rem;
+  border-radius: 18px;
+  margin-bottom: 0.8rem;
+  transition: background 0.25s, border-color 0.25s, transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s;
+  animation: taskSlideIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fix #2: shimmer line at top of card */
+#tasks .task::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  border-radius: 99px;
+}
+
+
+@keyframes taskSlideIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+#tasks .task:hover {
+  background: rgba(167, 139, 250, 0.08);
+  border-color: rgba(167, 139, 250, 0.28);
+  transform: translateX(6px) translateY(-1px);
+  /* Fix #2: deeper hover shadow */
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.09) inset,
+    0 20px 60px rgba(0, 0, 0, 0.55),
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    -4px 0 0 var(--neon-dark),
+    0 0 30px rgba(124, 58, 237, 0.08);
+}
+
+/* Completed task */
+#tasks .task.completed {
+  opacity: 0.45;
+}
+
+#tasks .task.completed .text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ── Task Content ── */
+.task .content {
+  flex: 1 1 0%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+/* ── Custom Checkbox — Fix #4: bigger + more satisfying ── */
+.checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  /* Fix #4: more visible default state */
+  border: 2px solid rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.06);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+/* Fix #4: hover glow before checking */
+.checkbox:hover {
+  border-color: rgba(167, 139, 250, 0.85);
+  background: rgba(167, 139, 250, 0.12);
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+  transform: scale(1.08);
+}
+
+.checkbox:checked {
+  background: linear-gradient(135deg, var(--neon-dark), var(--neon));
+  border-color: transparent;
+  /* Fix #4: stronger glow when checked */
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2), 0 0 20px rgba(167, 139, 250, 0.4);
+  animation: checkPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* checkmark via pseudo */
+.checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 7px;
+  height: 12px;
+  border: 2.5px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+  animation: checkDraw 0.2s 0.1s ease both;
+}
+
+@keyframes checkDraw {
+  from { opacity: 0; transform: rotate(45deg) scale(0.5); }
+  to   { opacity: 1; transform: rotate(45deg) scale(1); }
+}
+
+@keyframes checkPop {
+  0%   { transform: scale(0.6); }
+  55%  { transform: scale(1.25); }
+  80%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+/* ── Task Text Input — Fix #6: higher contrast ── */
+.task .content .text {
+  /* Fix #6: pure white, slightly bigger, medium weight */
+  color: #f1f5f9;
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: color 0.3s;
+  cursor: default;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+}
+
+.task .content .text:not([readonly]) {
+  color: var(--pink);
+  cursor: text;
+  border-bottom: 1px dashed rgba(244, 114, 182, 0.5);
+  white-space: normal;
+  overflow: visible;
+}
+
+/* ── Task Actions ── */
+.task .actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  flex-shrink: 0;
+  /* Fix #3: subtle left separator to anchor buttons to card */
+  padding-left: 1rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.task .actions button {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  /* Fix #3: taller buttons with more visual weight */
+  padding: 0.45rem 0.9rem;
+  border-radius: 9px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fix #3: shimmer sweep on button hover */
+.task .actions button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.task .actions button:hover::after {
+  transform: translateX(100%);
+}
+
+/* Edit button */
+.task .actions .edit {
+  color: var(--neon);
+  border-color: rgba(167, 139, 250, 0.25);
+  background: rgba(167, 139, 250, 0.08);
+  /* override the gradient-text from before */
+  -webkit-text-fill-color: var(--neon);
+  background-image: none;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+}
+
+.task .actions .edit:hover {
+  background: rgba(167, 139, 250, 0.18);
+  border-color: rgba(167, 139, 250, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
+}
+
+/* Delete button */
+.task .actions .delete {
+  color: var(--danger);
+  border-color: rgba(248, 113, 113, 0.2);
+  background: rgba(248, 113, 113, 0.07);
+}
+
+.task .actions .delete:hover {
+  background: rgba(248, 113, 113, 0.18);
+  border-color: rgba(248, 113, 113, 0.45);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(248, 113, 113, 0.2);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(167, 139, 250, 0.3);
+  border-radius: 99px;
+}
+
+/* ============================================================
+   Fix #7 — Micro-interactions
+   ============================================================ */
+
+/* 7a: Input typing state — subtle border pulse when typing */
+#new-task-input:not(:placeholder-shown) {
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.08);
+}
+
+/* 7b: Add button — ripple effect via pseudo on click */
+#new-task-submit {
+  position: relative;
+  overflow: hidden;
+}
+#new-task-submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.25) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#new-task-submit:active::after {
+  opacity: 1;
+  transition: opacity 0s;
+}
+
+/* 7c: Task delete — shake on hover over delete button */
+.task .actions .delete:hover ~ * ,
+.task:has(.delete:hover) {
+  animation: none;
+}
+.task .actions .delete:hover {
+  animation: deleteWiggle 0.35s ease;
+}
+@keyframes deleteWiggle {
+  0%,100% { transform: translateX(0) translateY(-1px); }
+  25%      { transform: translateX(-3px) translateY(-1px); }
+  75%      { transform: translateX(3px) translateY(-1px); }
+}
+
+/* 7d: Staggered task load animation */
+#tasks .task:nth-child(1) { animation-delay: 0.00s; }
+#tasks .task:nth-child(2) { animation-delay: 0.06s; }
+#tasks .task:nth-child(3) { animation-delay: 0.12s; }
+#tasks .task:nth-child(4) { animation-delay: 0.18s; }
+#tasks .task:nth-child(5) { animation-delay: 0.24s; }
+#tasks .task:nth-child(6) { animation-delay: 0.30s; }
+
+/* 7e: Completed task fade — smooth dimming transition */
+#tasks .task {
+  transition:
+    background 0.25s,
+    border-color 0.25s,
+    transform 0.3s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.3s,
+    opacity 0.4s ease;  /* smooth fade for completed */
+}
+
+/* 7f: Task text strike-through draws in */
+#tasks .task.completed .text {
+  text-decoration: line-through;
+  color: var(--muted);
+  text-decoration-color: rgba(167, 139, 250, 0.5);
+  text-decoration-thickness: 2px;
+}
+
+/* 7g: Filter tab switch — active pill scales in */
+.filter-btn.active {
+  animation: filterPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes filterPop {
+  from { transform: scale(0.88); opacity: 0.6; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* 7h: bulk action buttons — danger colour sweeps in on hover */
+.bulk-actions button {
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.bulk-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(248, 113, 113, 0.18);
+}
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  header h1 { font-size: 2.2rem; }
+  #new-task-input { font-size: 0.9rem; }
+  #new-task-submit { padding: 0.9rem 1rem; font-size: 0.82rem; }
+  .task .actions .edit,
+  .task .actions .delete { font-size: 0.65rem; padding: 0.3rem 0.6rem; }
+}
